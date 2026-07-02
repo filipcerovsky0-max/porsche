@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="cs" class="bg-[#0B0B0B] text-white antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porsche 911 GT3 RS | The Awakening</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0B0B0B',
+                        lizard: '#63D532',
+                        asphalt: '#1A1A1A',
+                        weissach: '#1f1f1f',
+                        pyro: '#D20000'
+                    },
+                    fontFamily: {
+                        syncopate: ['Syncopate', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-car': "url('https://images.unsplash.com/photo-1503376713919-61b4028b5f3a?q=80&w=2500&auto=format&fit=crop')",
+                        'aero-car': "url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2500&auto=format&fit=crop')",
+                        'engine-bg': "url('https://images.unsplash.com/photo-1600706432502-77a0e2e32729?q=80&w=2500&auto=format&fit=crop')",
+                        'cockpit-bg': "url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2500&auto=format&fit=crop')",
+                        'chassis-bg': "url('https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2500&auto=format&fit=crop')",
+                        'track-bg': "url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=2500&auto=format&fit=crop')"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        /* Smooth Scrolling & Scrollbar hide */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; cursor: none; }
+
+        /* Custom Cursor */
+        .cursor-dot {
+            width: 8px; height: 8px; background-color: #63D532;
+            position: fixed; top: 0; left: 0; border-radius: 50%;
+            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+        }
+        .cursor-outline {
+            width: 40px; height: 40px; border: 1px solid rgba(99, 213, 50, 0.5);
+            position: fixed; top: 0; left: 0; border-radius: 50%;
+            pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        .cursor-hover { width: 80px; height: 80px; background-color: rgba(99, 213, 50, 0.15); border-color: transparent; backdrop-filter: blur(2px); }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        /* SVG Aerodynamics Lines */
+        .wind-line { fill: none; stroke: #63D532; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; opacity: 0.6; filter: drop-shadow(0 0 10px rgba(99, 213, 50, 0.9)); }
+        .wind-particle { fill: #63D532; opacity: 0; filter: drop-shadow(0 0 5px #63D532); }
+
+        /* Engine Shake */
+        @keyframes rumble {
+            0% { transform: translate(0, 0) rotate(0deg) }
+            20% { transform: translate(-3px, 3px) rotate(-0.5deg) }
+            40% { transform: translate(-3px, -3px) rotate(0.5deg) }
+            60% { transform: translate(3px, 3px) rotate(-0.5deg) }
+            80% { transform: translate(3px, -3px) rotate(0.5deg) }
+            100% { transform: translate(0, 0) rotate(0deg) }
+        }
+        .engine-shake { animation: rumble 0.08s infinite; }
+
+        /* Glitch Effect */
+        .glitch-text { position: relative; }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
+        }
+        .glitch-text::before { left: 2px; text-shadow: -2px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
+        .glitch-text::after { left: -2px; text-shadow: -2px 0 blue; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(62px, 9999px, 42px, 0); }
+            40% { clip: rect(16px, 9999px, 78px, 0); }
+            60% { clip: rect(89px, 9999px, 12px, 0); }
+            80% { clip: rect(45px, 9999px, 56px, 0); }
+            100% { clip: rect(98px, 9999px, 23px, 0); }
+        }
+
+        /* Headlights */
+        .headlight {
+            width: 15vw; height: 8vw; background: radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 60%);
+            filter: blur(25px); opacity: 0; mix-blend-mode: screen;
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Data Node Animation */
+        @keyframes pulse-node {
+            0% { box-shadow: 0 0 0 0 rgba(99, 213, 50, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(99, 213, 50, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 213, 50, 0); }
+        }
+        .data-node { animation: pulse-node 2s infinite; }
+        
+        .magnet-btn { display: inline-block; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+    </style>
+</head>
+<body class="font-inter overflow-x-hidden selection:bg-lizard selection:text-dark">
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Film Noise & Grid -->
+    <div class="noise"></div>
+    <div class="fixed inset-0 grid-overlay pointer-events-none z-0"></div>
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-dark flex flex-col items-center justify-center">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,213,50,0.05)_0%,transparent_70%)]"></div>
+        <div class="text-lizard font-syncopate text-xs tracking-[0.8em] mb-6 uppercase glitch-text" data-text="Establishing Connection">Establishing Connection</div>
+        <div class="font-syncopate text-8xl md:text-9xl font-bold relative">
+            <span id="loader-percent" class="relative z-10 text-white">0</span>
+            <span class="text-lizard text-3xl absolute top-0 -right-12">%</span>
+        </div>
+        <div class="w-80 h-[2px] bg-white/10 mt-12 relative overflow-hidden">
+            <div id="loader-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-lizard/20 via-lizard to-lizard w-0 shadow-[0_0_10px_#63D532]"></div>
+        </div>
+        <div class="mt-8 text-white/30 font-mono text-xs w-80 h-20 overflow-hidden" id="loader-logs">
+            > Initializing telemetry systems...<br>
+        </div>
+    </div>
+
+    <!-- Navigation (Hidden initially) -->
+    <nav class="fixed top-0 left-0 w-full p-8 z-50 flex justify-between items-center opacity-0 -translate-y-full mix-blend-difference" id="main-nav">
+        <div class="font-syncopate font-bold text-xl tracking-widest text-white hover-trigger cursor-pointer">PORSCHE</div>
+        <div class="flex gap-8 font-inter text-xs uppercase tracking-widest text-white/70">
+            <a href="#aero" class="hover:text-lizard transition-colors hover-trigger">Aero</a>
+            <a href="#engine" class="hover:text-lizard transition-colors hover-trigger">Engine</a>
+            <a href="#chassis" class="hover:text-lizard transition-colors hover-trigger">Chassis</a>
+            <a href="#cockpit" class="hover:text-lizard transition-colors hover-trigger">Cockpit</a>
+        </div>
+    </nav>
+
+    <!-- MAIN WRAPPER -->
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <!-- SECTION A: HERO -->
+            <section class="relative w-full h-screen flex items-center justify-center overflow-hidden bg-dark" id="hero">
+                <!-- Background Car -->
+                <div class="absolute inset-0 bg-hero-car bg-cover bg-center bg-no-repeat opacity-30 scale-[1.15]" id="hero-bg"></div>
+                <!-- Gradient Overlays -->
+                <div class="absolute inset-0 bg-gradient-to-b from-dark/90 via-transparent to-dark/90"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-dark via-transparent to-dark"></div>
+                
+                <!-- Headlights Simulation -->
+                <div class="absolute top-[52%] left-[28%] headlight" id="hl-left"></div>
+                <div class="absolute top-[52%] right-[28%] headlight" id="hl-right"></div>
+
+                <!-- Title Elements -->
+                <div class="relative z-10 flex flex-col items-center w-full max-w-7xl mx-auto px-4 pointer-events-none">
+                    <div class="overflow-hidden w-full flex justify-between items-end border-b border-white/10 pb-4 mb-4 opacity-0 translate-y-10" id="hero-top-info">
+                        <span class="font-inter text-xs tracking-[0.3em] text-white/50">PROJECT 992.1</span>
+                        <span class="font-inter text-xs tracking-[0.3em] text-lizard">WEISSACH PACKAGE</span>
+                    </div>
+                    
+                    <div class="overflow-hidden flex flex-wrap justify-center gap-4 md:gap-16 items-baseline w-full">
+                        <h1 class="text-[12vw] font-bold leading-none tracking-tighter text-white" id="title-left">911</h1>
+                        <h1 class="text-[12vw] font-bold leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-lizard via-white to-gray-500" id="title-right">GT3 RS</h1>
+                    </div>
+                    
+                    <p class="mt-8 text-sm md:text-xl tracking-[1.5em] text-white/40 uppercase pl-[1.5em]" id="hero-subtitle">Street Legal Track Weapon</p>
+                </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-0" id="scroll-indicator">
+                    <div class="w-[1px] h-24 bg-white/20 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1/3 bg-lizard animate-[scroll-down_2s_ease-in-out_infinite]"></div>
+                    </div>
+                    <span class="text-[10px] font-syncopate uppercase tracking-widest text-lizard">Engage</span>
+                </div>
+
+                <style>
+                    @keyframes scroll-down { 0% { top: -33%; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+                </style>
+            </section>
+
+            <!-- SECTION B: AERODYNAMICS (WIND TUNNEL) -->
+            <section class="relative w-full min-h-[150vh] bg-dark" id="aero">
+                <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden">
+                    
+                    <!-- Fixed Profile Image -->
+                    <div class="w-full max-w-[95vw] h-[85vh] bg-aero-car bg-contain bg-center bg-no-repeat relative z-10 scale-[1.2] origin-center" id="aero-car">
+                        
+                        <!-- Hotspots Container -->
+                        <div id="hotspots-container" class="absolute inset-0 pointer-events-none">
+                            <!-- Hotspot 1 -->
+                            <div class="hotspot absolute top-[48%] left-[22%] opacity-0 flex flex-col items-center group pointer-events-auto hover-trigger">
+                                <div class="w-4 h-4 bg-lizard rounded-full data-node mb-2"></div>
+                                <div class="w-[1px] h-12 bg-lizard/50 mb-2 transition-all duration-300 group-hover:h-16"></div>
+                                <div class="bg-dark/90 border border-lizard/30 p-4 backdrop-blur-md translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 min-w-[200px] text-center">
+                                    <div class="font-syncopate text-xs text-lizard mb-1">Front Diffuser</div>
+                                    <div class="font-inter text-[10px] text-white/70">Continuously adjustable elements redirect airflow beneath the chassis.</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hotspot 2 -->
+                            <div class="hotspot absolute top-[35%] left-[30%] opacity-0 flex flex-col items-center group pointer-events-auto hover-trigger">
+                                <div class="w-4 h-4 bg-lizard rounded-full data-node mb-2"></div>
+                                <div class="w-[1px] h-12 bg-lizard/50 mb-2 transition-all duration-300 group-hover:h-16"></div>
+                                <div class="bg-dark/90 border border-lizard/30 p-4 backdrop-blur-md translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 min-w-[200px] text-center">
+                                    <div class="font-syncopate text-xs text-lizard mb-1">Wheel Arch Louvers</div>
+                                    <div class="font-inter text-[10px] text-white/70">Reduces dynamic pressure in wheel arches, enhancing front downforce.</div>
+                                </div>
+                            </div>
+
+                            <!-- Hotspot 3 -->
+                            <div class="hotspot absolute top-[28%] right-[15%] opacity-0 flex flex-col items-center group pointer-events-auto hover-trigger">
+                                <div class="bg-dark/90 border border-pyro/50 p-4 backdrop-blur-md -translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 min-w-[220px] text-center mb-2">
+                                    <div class="font-syncopate text-xs text-pyro mb-1">Active DRS Wing</div>
+                                    <div class="font-inter text-[10px] text-white/70">Hydraulically adjustable upper blade. Flat for speed, steep for braking.</div>
+                                </div>
+                                <div class="w-[1px] h-16 bg-pyro/50 mb-2 transition-all duration-300 group-hover:h-12"></div>
+                                <div class="w-4 h-4 bg-pyro rounded-full data-node shadow-[0_0_15px_#D20000]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Complex Wind Tunnel SVG -->
+                    <svg class="absolute inset-0 w-full h-full z-20 pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="none" id="wind-svg">
+                        <!-- Streamlines -->
+                        <path class="wind-line" d="M -100 200 Q 150 200, 250 150 T 600 100 T 1100 150" id="wind-1" />
+                        <path class="wind-line" d="M -100 250 Q 200 250, 300 220 T 650 180 T 1100 200" id="wind-2" />
+                        <path class="wind-line" d="M -100 350 Q 200 350, 350 320 T 700 280 T 1100 300" id="wind-3" />
+                        <path class="wind-line" d="M -100 450 Q 300 450, 450 400 T 800 350 T 1100 380" id="wind-4" />
+                        
+                        <!-- Particles -->
+                        <circle class="wind-particle" cx="-50" cy="200" r="2" />
+                        <circle class="wind-particle" cx="-50" cy="250" r="1.5" />
+                        <circle class="wind-particle" cx="-50" cy="350" r="2" />
+                    </svg>
+                    
+                    <!-- Dynamic Background Typography -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none z-0 overflow-hidden mix-blend-overlay" id="aero-bg-text-container">
+                        <span class="font-syncopate font-bold text-[25vw] leading-none whitespace-nowrap text-white/20 tracking-tighter" id="aero-bg-text">DOWNFORCE</span>
+                    </div>
+
+                    <!-- Metric overlay -->
+                    <div class="absolute bottom-10 right-10 z-30 font-mono text-right opacity-0" id="aero-metrics">
+                        <div class="text-lizard text-sm mb-1">Total Downforce</div>
+                        <div class="text-6xl font-bold"><span id="df-counter">0</span> <span class="text-xl text-white/50">kg</span></div>
+                        <div class="text-[10px] text-white/40 mt-1">@ 285 km/h</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION C: ENGINE & PERFORMANCE (EXPLODED VIEW) -->
+            <section class="relative w-full min-h-[120vh] bg-asphalt flex flex-col items-center justify-center overflow-hidden py-32" id="engine">
+                <!-- Exploded Engine BG -->
+                <div class="absolute inset-0 bg-engine-bg bg-cover bg-center opacity-10 mix-blend-luminosity scale-[1.2]" id="engine-bg"></div>
+                
+                <!-- Floating Engine Parts (Simulated via CSS/HTML) -->
+                <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden" id="engine-parts">
+                    <div class="absolute top-[20%] left-[10%] w-32 h-32 border border-white/5 rounded-full backdrop-blur-sm flex items-center justify-center part" data-speed="1.5">
+                        <span class="font-mono text-[8px] text-white/30 text-center">TITANIUM<br>CONNECTING ROD</span>
+                    </div>
+                    <div class="absolute bottom-[20%] right-[15%] w-48 h-48 border border-white/5 rounded-full backdrop-blur-sm flex items-center justify-center part" data-speed="0.8">
+                        <span class="font-mono text-[8px] text-white/30 text-center">FORGED<br>PISTON</span>
+                    </div>
+                    <div class="absolute top-[60%] left-[20%] w-24 h-24 border border-white/5 rounded-full backdrop-blur-sm flex items-center justify-center part" data-speed="2">
+                        <span class="font-mono text-[8px] text-white/30 text-center">DRY SUMP<br>PUMP</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 w-full max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                    
+                    <div class="flex flex-col justify-center">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-[1px] bg-lizard"></div>
+                            <span class="font-mono text-xs tracking-widest text-lizard uppercase">Powertrain</span>
+                        </div>
+                        <h2 class="font-syncopate text-5xl md:text-7xl font-bold uppercase mb-8 text-white leading-[0.9]">
+                            Symphony<br>of <span class="text-transparent bg-clip-text bg-gradient-to-r from-lizard to-white italic pr-4">Rev</span>
+                        </h2>
+                        <p class="font-inter text-gray-400 text-lg max-w-lg font-light leading-relaxed mb-12">
+                            The heartbeat of the GT3 RS is a naturally aspirated 4.0-liter flat-six engine. A masterpiece of engineering that prioritizes high-revving emotional response over forced induction. It screams all the way to 9,000 RPM.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-8 border-t border-white/10 pt-8">
+                            <div class="group hover-trigger">
+                                <div class="font-mono text-[10px] text-white/50 tracking-widest mb-2 transition-colors group-hover:text-lizard">DISPLACEMENT</div>
+                                <div class="font-syncopate text-3xl font-bold">3,996 <span class="text-sm text-gray-600">cm³</span></div>
+                            </div>
+                            <div class="group hover-trigger">
+                                <div class="font-mono text-[10px] text-white/50 tracking-widest mb-2 transition-colors group-hover:text-lizard">MAX POWER</div>
+                                <div class="font-syncopate text-3xl font-bold">525 <span class="text-sm text-gray-600">PS</span></div>
+                            </div>
+                            <div class="group hover-trigger">
+                                <div class="font-mono text-[10px] text-white/50 tracking-widest mb-2 transition-colors group-hover:text-lizard">MAX TORQUE</div>
+                                <div class="font-syncopate text-3xl font-bold">465 <span class="text-sm text-gray-600">Nm</span></div>
+                            </div>
+                            <div class="group hover-trigger">
+                                <div class="font-mono text-[10px] text-white/50 tracking-widest mb-2 transition-colors group-hover:text-lizard">REDLINE</div>
+                                <div class="font-syncopate text-3xl font-bold text-pyro">9,000 <span class="text-sm text-gray-600">RPM</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive RPM Counter -->
+                    <div class="relative w-full aspect-square flex items-center justify-center p-10 group" id="rpm-container">
+                        <!-- Dynamic Rings -->
+                        <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 200 200">
+                            <!-- Background Ring -->
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+                            <!-- Tick Marks -->
+                            <g id="rpm-ticks" stroke="rgba(255,255,255,0.2)" stroke-width="1"></g>
+                            <!-- Progress Ring -->
+                            <circle id="rpm-progress" cx="100" cy="100" r="90" fill="none" stroke="#63D532" stroke-width="4" stroke-dasharray="565" stroke-dashoffset="565" stroke-linecap="round"/>
+                        </svg>
+
+                        <div class="text-center relative z-10 flex flex-col items-center">
+                            <div class="font-syncopate text-7xl md:text-[8rem] font-bold tracking-tighter transition-colors duration-100" id="rpm-counter">0</div>
+                            <div class="font-syncopate text-sm text-white/50 tracking-[0.5em] uppercase mt-2">RPM</div>
+                            
+                            <div class="mt-8 font-mono text-[10px] border border-white/20 px-4 py-1 rounded-full text-white/50" id="gear-indicator">
+                                GEAR <span class="text-white text-lg ml-2 font-bold" id="current-gear">1</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Instruction -->
+                        <div class="absolute bottom-0 text-center w-full font-mono text-[10px] text-lizard/50 uppercase tracking-widest animate-pulse opacity-0" id="rpm-instruction">
+                            Scroll aggressively to redline
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION D: LIGHTWEIGHT CHASSIS (WEISSACH) -->
+            <section class="relative w-full h-screen bg-weissach flex items-center justify-center overflow-hidden" id="chassis">
+                <div class="absolute inset-0 bg-chassis-bg bg-cover bg-center opacity-30 mix-blend-overlay" id="chassis-bg"></div>
+                
+                <div class="relative z-10 w-full max-w-7xl mx-auto px-8 flex flex-col items-center text-center">
+                    <h2 class="font-syncopate text-4xl md:text-6xl font-bold uppercase mb-6 tracking-tight text-white">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">Weissach</span> Package
+                    </h2>
+                    <p class="font-inter text-gray-400 text-lg max-w-2xl font-light mb-16">
+                        Obsessive weight reduction. Exposed carbon-weave finish on the front lid, roof, parts of the rear wing, and exterior mirrors. The pursuit of the lowest possible mass.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">
+                        <!-- Card 1 -->
+                        <div class="chassis-card bg-dark/50 border border-white/5 p-8 backdrop-blur-md translate-y-20 opacity-0 hover-trigger group">
+                            <div class="text-lizard text-4xl font-syncopate font-bold mb-4">-15 <span class="text-sm text-white/50">kg</span></div>
+                            <h3 class="font-mono text-xs text-white uppercase tracking-widest mb-2">Magnesium Forged Wheels</h3>
+                            <div class="w-full h-[1px] bg-gradient-to-r from-lizard/50 to-transparent mb-4"></div>
+                            <p class="font-inter text-xs text-gray-500">Significant reduction in unsprung mass, improving suspension response and acceleration.</p>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="chassis-card bg-dark/50 border border-white/5 p-8 backdrop-blur-md translate-y-20 opacity-0 hover-trigger group">
+                            <div class="text-lizard text-4xl font-syncopate font-bold mb-4">CFRP</div>
+                            <h3 class="font-mono text-xs text-white uppercase tracking-widest mb-2">Anti-Roll Bars</h3>
+                            <div class="w-full h-[1px] bg-gradient-to-r from-lizard/50 to-transparent mb-4"></div>
+                            <p class="font-inter text-xs text-gray-500">Carbon-fiber reinforced plastic anti-roll bars on the front and rear axles. A world first.</p>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="chassis-card bg-dark/50 border border-white/5 p-8 backdrop-blur-md translate-y-20 opacity-0 hover-trigger group">
+                            <div class="text-lizard text-4xl font-syncopate font-bold mb-4">Titanium</div>
+                            <h3 class="font-mono text-xs text-white uppercase tracking-widest mb-2">Roll Cage</h3>
+                            <div class="w-full h-[1px] bg-gradient-to-r from-lizard/50 to-transparent mb-4"></div>
+                            <p class="font-inter text-xs text-gray-500">Derived directly from motorsport, offering maximum rigidity with minimal weight penalty.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION E: COCKPIT (THE COMMAND CENTER) -->
+            <section class="relative w-full h-[150vh] bg-dark" id="cockpit">
+                <div class="sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden">
+                    <!-- Cockpit Background (zooms in heavily) -->
+                    <div class="absolute inset-0 bg-cockpit-bg bg-cover bg-center opacity-40 scale-[1.1] origin-center" id="cockpit-img"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-dark opacity-80"></div>
+
+                    <div class="relative z-10 w-full max-w-screen-2xl h-full grid grid-cols-1 lg:grid-cols-3 items-center p-8 lg:p-16 gap-8">
+                        
+                        <!-- Left Controls -->
+                        <div class="hidden lg:flex flex-col items-end text-right justify-center space-y-16 pr-12 relative">
+                            <div class="absolute right-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                            
+                            <div class="cockpit-text opacity-0 translate-x-[-50px] relative hover-trigger group">
+                                <div class="absolute -right-16 top-1/2 w-8 h-[1px] bg-lizard/50 group-hover:bg-lizard transition-colors"></div>
+                                <h3 class="font-syncopate text-white text-xl mb-2 group-hover:text-lizard transition-colors">PASM</h3>
+                                <p class="font-inter text-xs text-gray-400 max-w-xs ml-auto">Rebound and compression damping for both axles can be adjusted individually in multiple stages.</p>
+                            </div>
+                            
+                            <div class="cockpit-text opacity-0 translate-x-[-50px] relative hover-trigger group">
+                                <div class="absolute -right-16 top-1/2 w-8 h-[1px] bg-lizard/50 group-hover:bg-lizard transition-colors"></div>
+                                <h3 class="font-syncopate text-white text-xl mb-2 group-hover:text-lizard transition-colors">PTV Plus</h3>
+                                <p class="font-inter text-xs text-gray-400 max-w-xs ml-auto">Electronic rear differential lock adjustment. Coast and power characteristics configurable on the fly.</p>
+                            </div>
+                        </div>
+
+                        <!-- Center Steering Wheel Focus -->
+                        <div class="flex flex-col items-center justify-center h-full relative" id="wheel-container">
+                            <div class="w-80 h-80 border-[0.5px] border-white/20 rounded-full flex items-center justify-center relative backdrop-blur-sm bg-black/10 shadow-[inset_0_0_50px_rgba(0,0,0,0.5)]" id="wheel-focus">
+                                <!-- Crosshairs -->
+                                <div class="absolute w-[1px] h-full bg-white/10"></div>
+                                <div class="absolute h-[1px] w-full bg-white/10"></div>
+                                <div class="absolute w-full h-full rounded-full border border-dashed border-white/10 animate-[spin_60s_linear_infinite]"></div>
+                                
+                                <div class="font-syncopate text-center z-10 p-6 bg-dark/80 rounded-full border border-lizard/30 backdrop-blur-md">
+                                    <span class="block text-[10px] tracking-widest text-lizard mb-2 uppercase">Manettino</span>
+                                    <span class="block text-3xl font-bold text-white glich-text" data-text="TRACK">TRACK</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Controls -->
+                        <div class="hidden lg:flex flex-col items-start justify-center space-y-16 pl-12 relative">
+                            <div class="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                            
+                            <div class="cockpit-text opacity-0 translate-x-[50px] relative hover-trigger group">
+                                <div class="absolute -left-16 top-1/2 w-8 h-[1px] bg-lizard/50 group-hover:bg-lizard transition-colors"></div>
+                                <h3 class="font-syncopate text-white text-xl mb-2 group-hover:text-lizard transition-colors">ESC / TC</h3>
+                                <p class="font-inter text-xs text-gray-400 max-w-xs">Traction control and stability systems tailored for slicks. Seven stages of intervention.</p>
+                            </div>
+                            
+                            <div class="cockpit-text opacity-0 translate-x-[50px] relative hover-trigger group">
+                                <div class="absolute -left-16 top-1/2 w-8 h-[1px] bg-pyro/50 group-hover:bg-pyro transition-colors"></div>
+                                <h3 class="font-syncopate text-pyro text-xl mb-2">DRS Button</h3>
+                                <p class="font-inter text-xs text-gray-400 max-w-xs">F1-style Drag Reduction System. Instantly flattens wings for maximum V-max on straights.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION F: TRACK DATA / FOOTER -->
+            <section class="relative w-full min-h-screen bg-dark pt-32 pb-10 flex flex-col items-center justify-between overflow-hidden" id="specs">
+                <div class="absolute inset-0 bg-track-bg bg-cover bg-center opacity-10 mix-blend-luminosity grayscale"></div>
+                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-dark to-transparent"></div>
+
+                <div class="relative z-10 w-full max-w-7xl px-8 flex-grow flex flex-col justify-center">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-8">
+                        <div>
+                            <h2 class="font-syncopate text-4xl md:text-6xl uppercase font-bold text-white leading-none">Nordschleife<br><span class="text-lizard">Proven</span></h2>
+                        </div>
+                        <div class="text-right mt-8 md:mt-0">
+                            <div class="font-mono text-xs text-gray-500 uppercase tracking-widest mb-2">Lap Time (20.8 km)</div>
+                            <div class="font-syncopate text-4xl md:text-5xl font-bold text-white glitch-text" data-text="6:49.328">6:49.328</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 py-10">
+                        <!-- Metric 1 -->
+                        <div class="flex flex-col items-start border-l border-white/10 pl-6 group hover-trigger">
+                            <div class="font-mono text-gray-500 uppercase tracking-widest text-[10px] mb-4">0-100 km/h</div>
+                            <div class="font-syncopate text-5xl font-bold text-white flex items-baseline gap-1">
+                                <span class="count-up" data-target="3.2" data-decimals="1">0.0</span>
+                                <span class="text-sm text-lizard">s</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Metric 2 -->
+                        <div class="flex flex-col items-start border-l border-white/10 pl-6 group hover-trigger">
+                            <div class="font-mono text-gray-500 uppercase tracking-widest text-[10px] mb-4">0-200 km/h</div>
+                            <div class="font-syncopate text-5xl font-bold text-white flex items-baseline gap-1">
+                                <span class="count-up" data-target="10.6" data-decimals="1">0.0</span>
+                                <span class="text-sm text-lizard">s</span>
+                            </div>
+                        </div>
+
+                        <!-- Metric 3 -->
+                        <div class="flex flex-col items-start border-l border-white/10 pl-6 group hover-trigger">
+                            <div class="font-mono text-gray-500 uppercase tracking-widest text-[10px] mb-4">Top Speed</div>
+                            <div class="font-syncopate text-5xl font-bold text-white flex items-baseline gap-1">
+                                <span class="count-up" data-target="296" data-decimals="0">0</span>
+                                <span class="text-sm text-lizard">km/h</span>
+                            </div>
+                        </div>
+
+                        <!-- Metric 4 -->
+                        <div class="flex flex-col items-start border-l border-white/10 pl-6 group hover-trigger">
+                            <div class="font-mono text-gray-500 uppercase tracking-widest text-[10px] mb-4">Kerb Weight</div>
+                            <div class="font-syncopate text-5xl font-bold text-white flex items-baseline gap-1">
+                                <span class="count-up" data-target="1450" data-decimals="0">0</span>
+                                <span class="text-sm text-lizard">kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full flex justify-center mt-32 mb-16">
+                        <!-- Magnetic Button -->
+                        <a href="#" class="magnet-btn group relative px-12 py-6 border border-white/20 hover:border-lizard bg-transparent overflow-hidden flex items-center justify-center hover-trigger">
+                            <div class="absolute inset-0 bg-lizard translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0"></div>
+                            <span class="relative z-10 font-syncopate uppercase tracking-[0.3em] text-xs font-bold text-white group-hover:text-dark transition-colors duration-300">Build Your Own</span>
+                        </a>
+                    </div>
+                </div>
+
+                <footer class="relative z-10 w-full border-t border-white/10 pt-8 pb-4 px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
+                    <div class="font-mono text-[10px] text-white/30 uppercase">© 2024 Dr. Ing. h.c. F. Porsche AG. All rights reserved.</div>
+                    <div class="font-syncopate text-xs text-white/20 tracking-widest">911 GT3 RS</div>
+                </footer>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    
+    <script>
+        // --- 1. LENIS SETUP (SMOOTH SCROLL) ---
+        const lenis = new Lenis({
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 0.8,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Connect GSAP ScrollTrigger to Lenis
+        gsap.registerPlugin(ScrollTrigger);
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time)=>{ lenis.raf(time * 1000) });
+        gsap.ticker.lagSmoothing(0, 0);
+
+        // --- 2. CUSTOM CURSOR & MAGNETIC BUTTON ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+        const magnetBtn = document.querySelector('.magnet-btn');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            // Fast follow for dot
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            // Smooth follow for outline
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 300, fill: "forwards" });
+
+            // Magnetic Button Logic
+            if(magnetBtn) {
+                const rect = magnetBtn.getBoundingClientRect();
+                const btnX = rect.left + rect.width / 2;
+                const btnY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(Math.pow(posX - btnX, 2) + Math.pow(posY - btnY, 2));
+
+                if(distance < 100) {
+                    gsap.to(magnetBtn, {
+                        x: (posX - btnX) * 0.4,
+                        y: (posY - btnY) * 0.4,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
+                } else {
+                    gsap.to(magnetBtn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+                }
+            }
+        });
+
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => {
+                cursorOutline.classList.add('cursor-hover');
+                cursorDot.style.opacity = '0';
+            });
+            trigger.addEventListener('mouseleave', () => {
+                cursorOutline.classList.remove('cursor-hover');
+                cursorDot.style.opacity = '1';
+            });
+        });
+
+        // --- 3. PRELOADER & INITIAL ANIMATION ---
+        let loadProgress = 0;
+        const loaderPercent = document.getElementById('loader-percent');
+        const loaderBar = document.getElementById('loader-bar');
+        const loaderLogs = document.getElementById('loader-logs');
+        const logMessages = [
+            "Initializing telemetry systems...",
+            "Checking aero configurations...",
+            "Priming fuel pumps...",
+            "Calibrating PASM sensors...",
+            "Warming up tires...",
+            "Systems nominal. Ready to launch."
+        ];
+
+        const loadInterval = setInterval(() => {
+            loadProgress += Math.floor(Math.random() * 5) + 1;
+            
+            if(loadProgress % 20 === 0 && loadProgress < 100) {
+                const log = document.createElement('div');
+                log.innerHTML = `> ${logMessages[Math.floor(loadProgress/20)]}`;
+                loaderLogs.appendChild(log);
+                loaderLogs.scrollTop = loaderLogs.scrollHeight;
+            }
+
+            if (loadProgress >= 100) {
+                loadProgress = 100;
+                clearInterval(loadInterval);
+                const log = document.createElement('div');
+                log.innerHTML = `> ${logMessages[5]}`;
+                log.style.color = '#63D532';
+                loaderLogs.appendChild(log);
+                setTimeout(revealSite, 800);
+            }
+            loaderPercent.textContent = loadProgress;
+            loaderBar.style.width = `${loadProgress}%`;
+        }, 50);
+
+        function revealSite() {
+            const tl = gsap.timeline();
+            tl.to('#preloader', { yPercent: -100, duration: 1.5, ease: 'power4.inOut' })
+              .to('#main-nav', { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }, "-=0.5")
+              .to('#hl-left, #hl-right', { opacity: 0.9, duration: 0.5, stagger: 0.2, ease: 'power2.inOut' }, "-=0.8")
+              .to('#hero-bg', { scale: 1, opacity: 0.5, duration: 2.5, ease: 'power3.out' }, "-=1")
+              .to('#hero-top-info', { y: 0, opacity: 1, duration: 1, ease: 'power2.out' }, "-=2")
+              .from('#title-left', { x: 150, opacity: 0, duration: 2, ease: 'expo.out' }, "-=1.8")
+              .from('#title-right', { x: -150, opacity: 0, duration: 2, ease: 'expo.out' }, "-=1.8")
+              .from('#hero-subtitle', { y: 30, opacity: 0, duration: 1.5, ease: 'power2.out' }, "-=1.5")
+              .to('#scroll-indicator', { opacity: 1, duration: 1 }, "-=0.5");
+        }
+
+        // --- 4. SCROLL ANIMATIONS ---
+
+        // HERO EXIT
+        gsap.to('#title-left', { x: '-30vw', opacity: 0, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+        gsap.to('#title-right', { x: '30vw', opacity: 0, scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+        gsap.to('#hero-bg', { yPercent: 40, opacity: 0, filter: 'blur(10px)', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+        gsap.to('#hero-top-info, #hero-subtitle, #scroll-indicator', { opacity: 0, y: -50, scrollTrigger: { trigger: '#hero', start: 'top top', end: '50% top', scrub: true } });
+
+        // AERO SECTION (Wind Tunnel)
+        const aeroTl = gsap.timeline({
+            scrollTrigger: { trigger: '#aero', start: 'top top', end: '+=3000', pin: true, scrub: 1 }
+        });
+
+        // Generate dynamic wind particles
+        const svg = document.getElementById('wind-svg');
+        for(let i=0; i<15; i++) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const y = 100 + Math.random() * 300;
+            line.setAttribute("d", `M -100 ${y} Q ${200+Math.random()*100} ${y+(Math.random()*40-20)}, ${400+Math.random()*100} ${y+(Math.random()*60-30)} T 1100 ${y}`);
+            line.setAttribute("class", "wind-line");
+            line.style.opacity = Math.random() * 0.5 + 0.1;
+            svg.appendChild(line);
+        }
+
+        const dfCounter = document.getElementById('df-counter');
+        const aeroTextContainer = document.getElementById('aero-bg-text-container');
+
+        aeroTl.to('#aero-car', { scale: 1, duration: 1, ease: 'power1.inOut' }, 0)
+              .to(aeroTextContainer, { opacity: 1, duration: 1 }, 0)
+              .to('#aero-bg-text', { scale: 1.2, x: '-10%', duration: 8 }, 0)
+              .to('#aero-metrics', { opacity: 1, duration: 0.5 }, 0.5)
+              .to('.wind-line', { strokeDashoffset: 0, duration: 3, stagger: 0.1, ease: 'power1.inOut' }, 0.5)
+              .to({}, { 
+                  duration: 6, 
+                  onUpdate: function() { 
+                      // Animate counter based on timeline progress
+                      dfCounter.textContent = Math.floor(this.progress() * 860); 
+                  } 
+              }, 1)
+              .to('.hotspot:nth-child(1)', { opacity: 1, duration: 0.5 }, 2)
+              .to('.hotspot:nth-child(2)', { opacity: 1, duration: 0.5 }, 3.5)
+              .to('.hotspot:nth-child(3)', { opacity: 1, duration: 0.5 }, 5)
+              .to('.wind-line, .hotspot', { opacity: 0, duration: 1 }, 7)
+              .to(aeroTextContainer, { opacity: 0, duration: 1 }, 7)
+              .to('#aero-metrics', { opacity: 0, duration: 1 }, 7);
+
+        // ENGINE SECTION
+        // Parallax Parts
+        gsap.utils.toArray('.part').forEach(part => {
+            const speed = part.getAttribute('data-speed');
+            gsap.to(part, {
+                y: () => -100 * speed,
+                rotation: () => 180 * speed,
+                scrollTrigger: { trigger: '#engine', start: 'top bottom', end: 'bottom top', scrub: 1 }
+            });
+        });
+
+        // Setup SVG RPM Ticks
+        const ticksContainer = document.getElementById('rpm-ticks');
+        for(let i=0; i<=90; i++) {
+            const angle = (i * 4) * (Math.PI / 180);
+            const x1 = 100 + 85 * Math.cos(angle);
+            const y1 = 100 + 85 * Math.sin(angle);
+            const isMajor = i % 10 === 0;
+            const r2 = isMajor ? 75 : 80;
+            const x2 = 100 + r2 * Math.cos(angle);
+            const y2 = 100 + r2 * Math.sin(angle);
+            
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+            if(i >= 80) line.setAttribute("stroke", "#D20000"); // Redline
+            ticksContainer.appendChild(line);
+        }
+
+        const rpmCounter = document.getElementById('rpm-counter');
+        const rpmProgress = document.getElementById('rpm-progress');
+        const engineSection = document.getElementById('engine');
+        const instruction = document.getElementById('rpm-instruction');
+        const currentGear = document.getElementById('current-gear');
+
+        ScrollTrigger.create({
+            trigger: '#engine', start: 'top 50%', end: 'bottom 20%',
+            onEnter: () => gsap.to(instruction, { opacity: 1, duration: 1, yoyo: true, repeat: 3 }),
+            onLeave: () => gsap.to(instruction, { opacity: 0 })
+        });
+
+        // Calculate scroll velocity for RPM
+        let lastScrollTop = 0;
+        let rpmValue = 800; // idle
+        
+        lenis.on('scroll', (e) => {
+            // Check if engine section is visible
+            const rect = engineSection.getBoundingClientRect();
+            if(rect.top < window.innerHeight && rect.bottom > 0) {
+                const velocity = Math.abs(e.velocity);
+                const targetRpm = Math.min(9000, 800 + (velocity * 200)); // Scale velocity to RPM
+                
+                // Smoothly interpolate current RPM to target
+                rpmValue += (targetRpm - rpmValue) * 0.1;
+                if(rpmValue < 800) rpmValue = 800;
+
+                rpmCounter.textContent = Math.floor(rpmValue);
+                
+                // Update SVG Circle (Circumference ~ 565)
+                const offset = 565 - ((rpmValue / 9000) * 565);
+                rpmProgress.style.strokeDashoffset = offset;
+
+                // Color logic & Shake & Gear
+                if (rpmValue > 8500) {
+                    rpmCounter.style.color = '#D20000';
+                    rpmProgress.style.stroke = '#D20000';
+                    engineSection.classList.add('engine-shake');
+                    currentGear.textContent = "7";
+                } else if (rpmValue > 7000) {
+                    rpmCounter.style.color = '#fff';
+                    rpmProgress.style.stroke = '#63D532';
+                    engineSection.classList.remove('engine-shake');
+                    currentGear.textContent = "5";
+                } else if (rpmValue > 4000) {
+                    currentGear.textContent = "3";
+                    rpmCounter.style.color = '#fff';
+                    rpmProgress.style.stroke = '#63D532';
+                    engineSection.classList.remove('engine-shake');
+                } else {
+                    currentGear.textContent = "1";
+                    rpmCounter.style.color = '#fff';
+                    rpmProgress.style.stroke = '#63D532';
+                    engineSection.classList.remove('engine-shake');
+                }
+            } else {
+                // Return to idle if not visible
+                rpmValue = 800;
+                rpmCounter.textContent = rpmValue;
+                rpmProgress.style.strokeDashoffset = 565 - ((800 / 9000) * 565);
+                engineSection.classList.remove('engine-shake');
+            }
+        });
+
+
+        // CHASSIS SECTION (Cards Fade Up)
+        gsap.to('.chassis-card', {
+            y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: 'power3.out',
+            scrollTrigger: { trigger: '#chassis', start: 'top 60%' }
+        });
+        gsap.to('#chassis-bg', {
+            scale: 1.1, scrollTrigger: { trigger: '#chassis', start: 'top bottom', end: 'bottom top', scrub: true }
+        });
+
+        // COCKPIT SECTION
+        const cockpitTl = gsap.timeline({
+            scrollTrigger: { trigger: '#cockpit', start: 'top top', end: '+=2000', pin: true, scrub: 1 }
+        });
+
+        cockpitTl.to('#cockpit-img', { scale: 1, opacity: 0.8, duration: 2, ease: 'power1.inOut' }, 0)
+                 .from('#wheel-container', { scale: 0.8, opacity: 0, duration: 1 }, 0.5)
+                 .to('#wheel-focus', { rotate: 25, scale: 1.1, duration: 1 }, 1)
+                 .to('.cockpit-text:nth-child(2)', { opacity: 1, x: 0, duration: 0.5 }, 1.2) // PASM
+                 .to('.cockpit-text:nth-child(3)', { opacity: 1, x: 0, duration: 0.5 }, 1.4) // PTV
+                 .to('#wheel-focus', { rotate: -15, duration: 1 }, 2)
+                 .to('.cockpit-text:nth-child(2), .cockpit-text:nth-child(3)', { opacity: 0, duration: 0.5 }, 2) // Hide left
+                 .to('.cockpit-text:nth-child(4)', { opacity: 1, x: 0, duration: 0.5 }, 2.2) // ESC
+                 .to('.cockpit-text:nth-child(5)', { opacity: 1, x: 0, duration: 0.5 }, 2.4) // DRS
+                 .to('#wheel-focus', { rotate: 0, scale: 1, duration: 1 }, 3);
+
+        // SPECS SECTION (Count up)
+        const counters = document.querySelectorAll('.count-up');
+        
+        counters.forEach(counter => {
+            const target = parseFloat(counter.getAttribute('data-target'));
+            const decimals = parseInt(counter.getAttribute('data-decimals'));
+
+            ScrollTrigger.create({
+                trigger: '#specs', start: 'top 70%', once: true,
+                onEnter: () => {
+                    gsap.to(counter, {
+                        innerHTML: target, duration: 2.5, ease: 'power3.out',
+                        snap: { innerHTML: Math.pow(10, -decimals) },
+                        onUpdate: function() {
+                            counter.innerHTML = Number(this.targets()[0].innerHTML).toFixed(decimals);
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
